@@ -97,7 +97,10 @@ wire [7:0]normalisedMag2;
 wire [7:0]normalisedMag3;
 wire [7:0]normalisedMag4;
 
-wire [7:0]dirE;
+wire [7:0]dirE1;
+wire [7:0]dirE2;
+wire [7:0]dirE3;
+wire [7:0]dirE4;
 
 wire we2;
 
@@ -177,7 +180,18 @@ sobelMag #(.STARTADDRESS(STARTHOLD4),.ENDADDRESS(ENDHOLD4))
 sobelMag4(clk,startMagEn,reset,sobelX4,sobelY4,normalisedMag4);
 
 sobelDir #(.STARTADDRESS(STARTHOLD1),.ENDADDRESS(ENDHOLD1))
-sobelDir1(clk,startDirEn,reset,sobelX1,sobelY1,dirE);
+sobelDir1(clk,startDirEn,reset,sobelX1,sobelY1,dirE1);
+
+sobelDir #(.STARTADDRESS(STARTHOLD2),.ENDADDRESS(ENDHOLD2))
+sobelDir2(clk,startDirEn,reset,sobelX2,sobelY2,dirE2);
+
+sobelDir #(.STARTADDRESS(STARTHOLD3),.ENDADDRESS(ENDHOLD3))
+sobelDir3(clk,startDirEn,reset,sobelX3,sobelY3,dirE3);
+
+sobelDir #(.STARTADDRESS(STARTHOLD4),.ENDADDRESS(ENDHOLD4))
+sobelDir4(clk,startDirEn,reset,sobelX4,sobelY4,dirE4);
+
+sobelOutBlock sobelOutBlockMag(clk,startMagEn,reset,dirE1,dirE2,dirE3,dirE4,data2,we2,write_addr2);
 
 /*
 //Block to normalize the output of the multiplier to an 8 bit (pixel value)

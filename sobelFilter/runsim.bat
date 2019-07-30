@@ -1,4 +1,4 @@
-iverilog -o sobelRun sobelTB.v sobelFilter.v beatCounter.v SobelBufferBlock.v sobelHoldBlock.v sobelMultBlock.v sobelShifterBlock.v simple_ram_dual_clock.v sobelMag.v sobelDir.v
+iverilog -o sobelRun sobelTB.v sobelFilter.v beatCounter.v SobelBufferBlock.v sobelHoldBlock.v sobelMultBlock.v sobelShifterBlock.v simple_ram_dual_clock.v sobelMag.v sobelDir.v sobelOutBlock.v
 vvp -v sobelRun -fst
 REM -fst to change from vsd to fst wave format -none no file output
 REM cd C:\Users\RobertJolley\OneDrive - Innopharma Labs\Documents\pycode

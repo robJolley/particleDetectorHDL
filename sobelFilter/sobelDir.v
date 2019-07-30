@@ -1,7 +1,7 @@
 module sobelDir(clk,startEn,reset,sobelX,sobelY,dirE);
 
 parameter STARTADDRESS = 770,  ENDADDRESS = 523518,BEATS = 4, PAUSE = 1,COUNTSTEPHOLD = 2, PIXW = 24;//address starts in and down two pixels ends the same.  parameter can be imported to accommodate second concurrent pixel 
-
+parameter STHRESHOLD = 5632;
 
 input clk,startEn,reset;
 input signed[8:0]sobelX;
@@ -14,11 +14,12 @@ wire signed[8:0]sobelY;
 wire signed[16:0] sobelY16;
 reg signed[16:0] normalisedDir;
 reg [7:0] dirE;
-
+wire normaliseFilter;
 
 
 
 assign sobelY16 = {sobelY,8'b00000000};
+assign normaliseFilter = ((sobelX**2+ sobelX**2) >= STHRESHOLD);
 
 
 beatCounter
@@ -28,7 +29,7 @@ beatCounter
 
 always@(posedge clk)
 	begin
-		if (started == 1)
+		if (started == 1 && normaliseFilter == 1)
 			begin
 				if(sobelX != 0)
 					begin
