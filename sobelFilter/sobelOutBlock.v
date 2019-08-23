@@ -49,7 +49,7 @@ always@(posedge clk)
 						out2DataHold[7:0] <= normalisedByte4;
 						out2DataHold[15:8] <= normalisedByte3;
 						dataSched <=COUNT0;
-						startOutput <= 1;
+
 					end
 				COUNT2:
 					begin
@@ -58,6 +58,7 @@ always@(posedge clk)
 						out2DataHold[23:16] <= normalisedByte4;
 						out2DataHold[31:24] <= normalisedByte3;
 						dataSched <=COUNT3;
+						startOutput <= 1;
 					end
 				COUNT1:
 					begin
@@ -83,35 +84,50 @@ always@(posedge clk)
 	if(reset == 1)
 		begin
 			dataSched <= COUNT0;
-			currentAddress <= STARTADDRESS-1;
+			currentAddress <= STARTADDRESS;//**** Was STARTADDRESS - 1
 			startOutput <= 0;
+			wraddr <= STARTADDRESS;
 		end		
-always@(posedge clk)
+always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clock ticks (8 pixels) 
+// the second output is to the pixels below first,  when the end of the image row is reached the address jumps 256 places so that two 
+//rows are addressed simultaneously and not overwritten
+
 	if(started && startOutput)
 		begin
 			if(dataSched == COUNT3)
 				begin
-					outData <= out2DataHold1;
+//					outData <= out1DataHold;
 					wraddr <=currentAddress;
 					out2DataHold1 <= out2DataHold;
 					we <= 0;
 				end
 			if(dataSched == COUNT0)
 				begin
-					out2DataHold2 <= out2DataHold1;
+					out2DataHold1 <= out2DataHold;
+					outData <= out1DataHold;
+					wraddr <=currentAddress;
 					we <= 1;
 				end
 				
 			if(dataSched == COUNT1)
 				begin
-					outData <= out2DataHold2;
+	//				outData <= out2DataHold2;
+					out2DataHold2 <= out2DataHold1;
 					wraddr <= currentAddress+256;
 					we <= 0;
 				end
 			if(dataSched == COUNT2)
 				begin
 					we <= 1;
-					currentAddress <= currentAddress +1;
+					outData <= out2DataHold2;
+					if (currentAddress[7:0] == 255)
+						begin
+							currentAddress <= currentAddress + 257;
+						end
+					else
+						begin
+							currentAddress <= currentAddress +1;
+						end
 				end	
 		end	
 	

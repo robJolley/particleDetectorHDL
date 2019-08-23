@@ -136,7 +136,7 @@ assign sobelShiftOutHold4C = sobelShiftOutD[23:0];
 sobelBufferBlock	BufferBlock(clk,popBufferEn,reset,q1,BufferA,BufferB,BufferC,BufferD);
 
 //Shifter block to shift through 5x128 bit registers 16 bits at a time to populate the two hold blocks
-sobelShifterBlock	ShifterBlock(clk,sobelShiftEn,reset,BufferD,BufferA,BufferB,BufferC,sobelShiftOutA,sobelShiftOutB,sobelShiftOutC,sobelShiftOutD);
+sobelShifterBlock	ShifterBlock(clk,sobelShiftEn,reset,BufferA,BufferB,BufferC,BufferD,sobelShiftOutA,sobelShiftOutB,sobelShiftOutC,sobelShiftOutD);
 
 //Hold block arranging the pixels in 3x3 matrix for presentation to the multiplier block
 sobelHoldBlock #(.STARTADDRESS(STARTHOLD1),.ENDADDRESS(ENDHOLD1))
@@ -191,7 +191,7 @@ sobelDir3(clk,startDirEn,reset,sobelX3,sobelY3,dirE3);
 sobelDir #(.STARTADDRESS(STARTHOLD4),.ENDADDRESS(ENDHOLD4))
 sobelDir4(clk,startDirEn,reset,sobelX4,sobelY4,dirE4);
 
-sobelOutBlock sobelOutBlockMag(clk,startMagEn,reset,dirE1,dirE2,dirE3,dirE4,data2,we2,write_addr2);
+sobelOutBlock sobelOutBlockMag(clk,startMagEn,reset,normalisedMag1,normalisedMag2,normalisedMag3,normalisedMag4,data2,we2,write_addr2);
 
 /*
 //Block to normalize the output of the multiplier to an 8 bit (pixel value)

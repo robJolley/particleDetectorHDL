@@ -48,10 +48,10 @@ always@(posedge clk)
 			end
 		if (process == 0)
 			begin
-				BufferA <= readData;
-				BufferB <= regBufferA;
-				BufferC <= regBufferB;
-				BufferD <= regBufferC;
+				BufferA <= regBufferA;
+				BufferB <= regBufferB;
+				BufferC <= regBufferC;
+				BufferD <= regBufferD;
 			end
 	end
 	

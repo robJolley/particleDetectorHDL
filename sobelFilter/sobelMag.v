@@ -12,9 +12,13 @@ wire [23:0]pixelCounter;
 wire signed[8:0]sobelX;
 wire signed[8:0]sobelY;
 wire normaliseFilter;
+wire signed[17:0]unnormalisedMag;
 reg [7:0] normalisedMag;
 reg processFlag;
-assign normaliseFilter = ((sobelX**2+ sobelX**2) >= STHRESHOLD);
+reg signed[9:0]normDevider;
+
+assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) >= STHRESHOLD);
+assign unnormalisedMag = (sobelX*sobelX + sobelY*sobelY);
 
 
 beatCounter
@@ -26,7 +30,7 @@ always@(posedge clk)
 	begin
 		if ((started == 1) && (normaliseFilter == 1))
 			begin
-					normalisedMag <=(sobelX**2 + sobelY**2)/512;
+					normalisedMag <=unnormalisedMag/normDevider;//Truncate last 9 bits, ie divide by 512
 					processFlag <= 1;
 					
 			end
@@ -39,10 +43,12 @@ always@(posedge clk)
 
 	end	
 always@(posedge clk)
+	begin
 	if(reset == 1)
 		begin
 			normalisedMag <= 0;
 			processFlag <= 0;
+			normDevider <= 512;
 		end
-
+	end
 endmodule			

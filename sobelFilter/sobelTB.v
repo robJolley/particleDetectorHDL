@@ -38,15 +38,34 @@ sobelFilter sobelFilter1(clk,reset,startEn,read_addr1,q1,we2,we3,write_addr2,dat
 
 initial
 	begin
-		$readmemh("C:/outfileSobel.hex", SRAM1.ram);
-		SRAM1.ram[768] = 64'd1;
-		SRAM1.ram[512] = 64'd2;
-		SRAM1.ram[256] = 64'd3;
-		SRAM1.ram[0] = 64'd4;
-		SRAM1.ram[769] = 64'd5;
-		SRAM1.ram[513] = 64'd6;
-		SRAM1.ram[257] = 64'd7;
-		SRAM1.ram[1] = 64'd8;
+		$readmemh("C:/hexfiles/outSRAM2.hex", SRAM1.ram);
+//		SRAM1.ram[768] = 64'd1;
+//		SRAM1.ram[512] = 64'd2;
+//		SRAM1.ram[256] = 64'd3;
+//		SRAM1.ram[0] = 64'd4;
+//		SRAM1.ram[769] = 64'd5;
+//		SRAM1.ram[513] = 64'd6;
+//		SRAM1.ram[257] = 64'd7;
+//		SRAM1.ram[1] = 64'd8;
+
+
+		
+		SRAM1.ram[0+128] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[256+128] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[512+128] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[768+128] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[1024+128] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[0+129] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[256+129] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[512+129] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[768+129] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[1024+129] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[0+130] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[256+130] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[512+130] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[768+130] <= 64'h00000000FFFFFFFF;
+		SRAM1.ram[1024+130] <= 64'h00000000FFFFFFFF;			
+
 		
 		$display("ramValue:",SRAM1.ram[0]);
 			
@@ -61,7 +80,7 @@ initial
 		#10;
 		startEn = 0;
 
-		#1000;
+		#15000000;
 
 		$writememh("C:/hexfiles/outSRAM4sobel.hex", SRAM2.ram);
 //		$writememh("C:/hexfiles/outSRAM3sobel.hex", SRAM1.ram);

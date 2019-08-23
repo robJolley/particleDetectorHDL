@@ -32,8 +32,25 @@ gaussianFilter gaussFilter(clk,reset,startEn,read_addr1,q1,we2,write_addr2,data2
 
 initial
 	begin
-		$readmemh("C:/outfile1.hex", SRAM1.ram);  
+		$readmemh("C:/outfile2.hex", SRAM1.ram);  
 		$display("ramValue:",SRAM1.ram[0]);
+/*		
+		SRAM1.ram[1152] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1152+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1152+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1152+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1152+1024] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1153] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1153+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1153+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1153+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1153+1024] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1154] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1154+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1154+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1154+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM1.ram[1154+1024] = 64'hFFFFFFFFFFFFFFFF;
+*/		
 			
 		clk = 0;
 		reset = 1;
@@ -56,8 +73,29 @@ initial
 
 
 		#15000000;
-		$writememh("C:/hexfiles/outSRAM4.hex", SRAM2.ram);
+/*		
+		SRAM2.ram[1152] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1152+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1152+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1152+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1152+1024] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1153] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1153+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1153+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1153+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1153+1024] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1154] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1154+256] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1154+512] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1154+768] = 64'hFFFFFFFFFFFFFFFF;
+		SRAM2.ram[1154+1024] = 64'hFFFFFFFFFFFFFFFF;
+*/		
+		$writememh("C:/hexfiles/outSRAM2.hex", SRAM2.ram);
 //		$writememh("C:/hexfiles/outSRAM3.hex", SRAM1.ram);
+
+		
+
+	
 		$display("ramValue:",SRAM2.ram[0]);
 		$stop;
 		$finish;
@@ -104,7 +142,7 @@ initial
 //					#10;
 //					read_addr1 = addresSchedule-256;
 //					#10;
-//					//read_addr1 <= addresSchedule -(256*2);
+//					read_addr1 <= addresSchedule -(256*2);
 //					#10;
 //					read_addr1 = addresSchedule -(256*3);
 //					#10;

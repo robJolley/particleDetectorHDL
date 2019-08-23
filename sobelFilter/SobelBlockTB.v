@@ -105,8 +105,9 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
 
 initial
 	begin
-		$readmemh("C:/outfile1.hex", SRAM1.ram);  
+		$readmemh("C:/hexfiles/outSRAM2.hex", SRAM1.ram);  
 		$display("ramValue:",SRAM1.ram[0]);
+/*		
 		SRAM1.ram[0+128] <= 64'h00000000FFFFFFFF;
 		SRAM1.ram[256+128] <= 64'h00000000FFFFFFFF;
 		SRAM1.ram[512+128] <= 64'h00000000FFFFFFFF;
@@ -122,6 +123,7 @@ initial
 		SRAM1.ram[512+130] <= 64'h00000000FFFFFFFF;
 		SRAM1.ram[768+130] <= 64'h00000000FFFFFFFF;
 		SRAM1.ram[1024+130] <= 64'h00000000FFFFFFFF;			
+*/
 		clk = 0;
 		reset = 1;
 		addressCase = C0;
@@ -149,9 +151,9 @@ initial
 		#1000;
 
 
-		#300;
-		$writememh("C:/hexfiles/outSRAM2.hex", SRAM2.ram);
-		$writememh("C:/hexfiles/outSRAM3.hex", SRAM1.ram);
+		#15000000;
+		$writememh("C:/hexfiles/outSRAM3.hex", SRAM2.ram);
+//		$writememh("C:/hexfiles/outSRAM3.hex", SRAM1.ram);
 		$display("ramValue:",SRAM2.ram[0]);
 		$stop;
 		$finish;
