@@ -44,36 +44,40 @@ always@(posedge clk)
 			case(dataSched)
 				COUNT3:
 					begin
-						out1DataHold[7:0] <= normalisedByte2;
-						out1DataHold[15:8] <= normalisedByte1;
-						out2DataHold[7:0] <= normalisedByte4;
-						out2DataHold[15:8] <= normalisedByte3;
+						out1DataHold[7:0] <= normalisedByte4;
+						out1DataHold[15:8] <= normalisedByte3;
+						out2DataHold[7:0] <= normalisedByte2;
+						out2DataHold[15:8] <= normalisedByte1;
 						dataSched <=COUNT0;
 
 					end
 				COUNT2:
 					begin
-						out1DataHold[23:16] <= normalisedByte2;
-						out1DataHold[31:24] <= normalisedByte1;
-						out2DataHold[23:16] <= normalisedByte4;
-						out2DataHold[31:24] <= normalisedByte3;
+						out1DataHold[23:16] <= normalisedByte4;
+						out1DataHold[31:24] <= normalisedByte3;
+						out2DataHold[23:16] <= normalisedByte2;
+						out2DataHold[31:24] <= normalisedByte1;
 						dataSched <=COUNT3;
 						startOutput <= 1;
 					end
 				COUNT1:
 					begin
-						out1DataHold[39:32] <= normalisedByte2;
-						out1DataHold[47:40] <= normalisedByte1;
-						out2DataHold[39:32] <= normalisedByte4;
-						out2DataHold[47:40] <= normalisedByte3;
+						out1DataHold[39:32] <= normalisedByte4;
+						out1DataHold[47:40] <= normalisedByte3;
+						out2DataHold[39:32] <= normalisedByte2;
+						out2DataHold[47:40] <= normalisedByte1;
 						dataSched <=COUNT2;
 					end
 				COUNT0:
 					begin
-						out1DataHold[55:48] <=normalisedByte2;
-						out1DataHold[63:56] <=normalisedByte1;
-						out2DataHold[55:48] <=normalisedByte4;
-						out2DataHold[63:56] <=normalisedByte3;
+						out1DataHold[55:48] <=normalisedByte4;
+						out1DataHold[63:56] <=normalisedByte3;
+						out2DataHold[55:48] <=normalisedByte2;
+						out2DataHold[63:56] <=normalisedByte1;
+					//	out1DataHold[55:48] <=255;
+					//	out1DataHold[63:56] <=255;
+					//	out2DataHold[55:48] <=255;
+					//	out2DataHold[63:56] <=255;
 						dataSched <=COUNT1;
 					end
 				default:dataSched <= COUNT0;
@@ -111,15 +115,13 @@ always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clo
 				
 			if(dataSched == COUNT1)
 				begin
-	//				outData <= out2DataHold2;
-					out2DataHold2 <= out2DataHold1;
 					wraddr <= currentAddress+256;
 					we <= 0;
 				end
 			if(dataSched == COUNT2)
 				begin
 					we <= 1;
-					outData <= out2DataHold2;
+					outData <= out2DataHold1;
 					if (currentAddress[7:0] == 255)
 						begin
 							currentAddress <= currentAddress + 257;

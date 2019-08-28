@@ -21,9 +21,9 @@ wire [23:0]sobelHoldOutC;
 reg signed [8:0]sobelX;
 reg signed [8:0]sobelY;
 
-wire signed [12:0]combSobelX;
+wire signed [8:0]combSobelX;
 
-wire signed [12:0]combSobelY;
+wire signed [8:0]combSobelY;
 
 reg signed [8:0]MultA1X;
 reg signed [8:0]MultA2X;
@@ -82,8 +82,10 @@ always@(posedge clk)
 				MultC1Y <= $signed(sobelHoldOutC[23:16]);
 				MultC2Y <= $signed(sobelHoldOutC[15:8]*2);
 				MultC3Y <= $signed(sobelHoldOutC[7:0]);
-				sobelX <= {combSobelX[12],combSobelX[7:0]};//Values contraindicated first 'sign' bit + rest of 8 bit values... 
-				sobelY <= {combSobelY[12],combSobelY[7:0]};					
+				sobelX <= combSobelX;
+				sobelY <= combSobelY;
+//				sobelX <= {combSobelX[12],combSobelX[7:0]};//Values contraindicated first 'sign' bit + rest of 8 bit values... 
+//				sobelY <= {combSobelY[12],combSobelY[7:0]};					
 			end
 		else
 			begin

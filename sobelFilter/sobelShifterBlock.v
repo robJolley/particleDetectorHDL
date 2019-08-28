@@ -31,10 +31,10 @@ reg [127:0]sobelShiftBufferD;
 reg [63:0]QA;
 
 
-assign sobelShiftOutA[31:0] = sobelShiftBufferA[127:95];
-assign sobelShiftOutB[31:0] = sobelShiftBufferB[127:95];
-assign sobelShiftOutC[31:0] = sobelShiftBufferC[127:95];
-assign sobelShiftOutD[31:0] = sobelShiftBufferD[127:95];
+assign sobelShiftOutA[31:0] = sobelShiftBufferA[127:96];
+assign sobelShiftOutB[31:0] = sobelShiftBufferB[127:96];
+assign sobelShiftOutC[31:0] = sobelShiftBufferC[127:96];
+assign sobelShiftOutD[31:0] = sobelShiftBufferD[127:96];
 
 
 beatCounter

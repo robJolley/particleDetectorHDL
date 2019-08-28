@@ -19,7 +19,7 @@ wire [63:0]data1;
 wire [63:0]data2;
 wire [63:0]data3;
 wire startEn,clk,reset;
-reg popBufferEn,HoldEn,sobelShiftEn,startMultiplierEn,startNormalisingEn,normPutDataEn,getNext,startMagEn,startDirEn;
+reg popBufferEn,HoldEn,sobelShiftEn,startMultiplierEn,startNormalisingEn,normPutDataEn,getNext,startMagEn,startDirEn,outEn;
 reg [2:0]addressCase;
 reg sobelSequence;
 wire [63:0]q1;
@@ -191,7 +191,7 @@ sobelDir3(clk,startDirEn,reset,sobelX3,sobelY3,dirE3);
 sobelDir #(.STARTADDRESS(STARTHOLD4),.ENDADDRESS(ENDHOLD4))
 sobelDir4(clk,startDirEn,reset,sobelX4,sobelY4,dirE4);
 
-sobelOutBlock sobelOutBlockMag(clk,startMagEn,reset,normalisedMag1,normalisedMag2,normalisedMag3,normalisedMag4,data2,we2,write_addr2);
+sobelOutBlock sobelOutBlockMag(clk,outEn,reset,normalisedMag1,normalisedMag2,normalisedMag3,normalisedMag4,data2,we2,write_addr2);
 
 /*
 //Block to normalize the output of the multiplier to an 8 bit (pixel value)
@@ -228,6 +228,9 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
 							normPutDataEn = 0;
 							HoldEn = 0;
 							normPutDataEn = 0;
+							outEn = 0;
+							startDirEn = 0;
+							startMagEn = 0;
 						end
 						
 
@@ -241,52 +244,119 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
 							HoldEn = 0;
 							normPutDataEn = 0;
 						end
-					
+						
 					if(sobelCount == 24'd6)
 						begin
 							popBufferEn = 0;
 							sobelShiftEn = 0;
-							startMultiplierEn = 1;
+							startMultiplierEn = 0;
+							startNormalisingEn = 0;
+							normPutDataEn = 0;
+							HoldEn = 0;
+							normPutDataEn = 0;
+						end
+					
+					if(sobelCount == 24'd13)
+						begin
+							popBufferEn = 0;
+							sobelShiftEn = 1;
+							startMultiplierEn = 0;
 							startNormalisingEn = 0;
 							normPutDataEn = 0;
 							HoldEn = 1;
 							normPutDataEn = 0;
 						end
 						
-					if(sobelCount == 24'd8)
+					if(sobelCount == 24'd14)
 						begin
 							popBufferEn = 0;
 							sobelShiftEn = 0;
-							startMultiplierEn = 0;
-							startMagEn =1;
+							startMultiplierEn = 1;
+							startNormalisingEn = 0;
+							normPutDataEn = 0;
+							HoldEn = 0;
+							normPutDataEn = 0;
+						end
+						
+					if(sobelCount == 24'd15)
+						begin
+							popBufferEn = 0;
+							sobelShiftEn = 0;
+							startMagEn = 1;
 							startDirEn = 1;
+							//startMultiplierEn = 0;
+							startNormalisingEn = 0;
 							normPutDataEn = 0;
 							HoldEn = 0;
 							normPutDataEn = 0;
 						end
-					if(sobelCount == 24'd10)
+					
+					if(sobelCount == 24'd16)
 						begin
 							popBufferEn = 0;
 							sobelShiftEn = 0;
+							//startMagEn = 1;
+							//startDirEn = 1;
 							startMultiplierEn = 0;
-							startMagEn =0;
-							startDirEn = 0;
+							startNormalisingEn = 0;
 							normPutDataEn = 0;
 							HoldEn = 0;
 							normPutDataEn = 0;
 						end
+						
+					if(sobelCount == 24'd17)
+						begin
+							popBufferEn = 0;
+							sobelShiftEn = 0;
+							startMagEn = 0;
+							startDirEn = 0;
+							startMultiplierEn = 0;
+							startNormalisingEn = 0;
+							normPutDataEn = 0;
+							HoldEn = 0;
+							normPutDataEn = 0;
+						end						
 						
 					if(sobelCount == 24'd18)
 						begin
 							popBufferEn = 0;
 							sobelShiftEn = 0;
 							startMultiplierEn = 0;
-							startNormalisingEn =0;
+							startMagEn = 0;
+							startDirEn = 0;
 							normPutDataEn = 0;
 							HoldEn = 0;
 							normPutDataEn = 0;
+							outEn = 1;
 						end
-					if(sobelCount == 24'd20)
+						
+					if(sobelCount == 24'd22)
+						begin
+							popBufferEn = 0;
+							sobelShiftEn = 0;
+							startMultiplierEn = 0;
+							startMagEn = 0;
+							startDirEn = 0;
+							normPutDataEn = 0;
+							HoldEn = 0;
+							normPutDataEn = 0;
+							outEn = 0;
+						end
+						
+
+					if(sobelCount == 24'd23)
+						begin
+							popBufferEn = 0;
+							sobelShiftEn = 0;
+							startMultiplierEn = 0;
+							startMagEn =0;
+							startDirEn = 0;
+							normPutDataEn = 1;
+							HoldEn = 0;
+						end
+						
+
+					if(sobelCount == 24'd25)
 						begin
 							popBufferEn = 0;
 							sobelShiftEn = 0;

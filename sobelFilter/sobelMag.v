@@ -17,7 +17,7 @@ reg [7:0] normalisedMag;
 reg processFlag;
 reg signed[9:0]normDevider;
 
-assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) >= STHRESHOLD);
+assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) > 0)//STHRESHOLD);
 assign unnormalisedMag = (sobelX*sobelX + sobelY*sobelY);
 
 
@@ -30,7 +30,7 @@ always@(posedge clk)
 	begin
 		if ((started == 1) && (normaliseFilter == 1))
 			begin
-					normalisedMag <=unnormalisedMag/normDevider;//Truncate last 9 bits, ie divide by 512
+					normalisedMag <=unnormalisedMag[16:9];//normDevider;//Truncate last 9 bits, ie divide by 512
 					processFlag <= 1;
 					
 			end
