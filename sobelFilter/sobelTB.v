@@ -59,8 +59,9 @@ initial
 		#10;
 		startEn = 0;
 
-		#15000000;
-
+	 	#5000000;
+//		#150000;
+//		#10000;
 		$writememh("C:/hexfiles/outSRAM4sobel.hex", SRAM2.ram);
 //		$writememh("C:/hexfiles/outSRAM3sobel.hex", SRAM1.ram);
 		$display("ramValue:",SRAM2.ram[0]);

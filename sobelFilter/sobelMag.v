@@ -17,7 +17,7 @@ reg [7:0] normalisedMag;
 reg processFlag;
 reg signed[9:0]normDevider;
 
-assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) > 0)//STHRESHOLD);
+assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) > 0);//STHRESHOLD);
 assign unnormalisedMag = (sobelX*sobelX + sobelY*sobelY);
 
 

@@ -1,6 +1,5 @@
 `timescale 1ns/100ps
 module sobelMultBlock(clk,startMultiplierEn,reset,sobelHoldOutA,sobelHoldOutB,sobelHoldOutC,sobelX,sobelY);
-
 parameter STARTADDRESS = 770,  ENDADDRESS = 2097152/2,BEATS = 4, PAUSE = 1,COUNTSTEPHOLD = 2, PICW = 24;//address starts in and down two pixels ends the same.  parameter can be imported to accommodate second concurrent pixel 
 
 
@@ -47,8 +46,8 @@ reg signed [8:0]MultC3Y;
 
 
 
-assign combSobelX = $signed(MultA1X+MultA2X+MultA3X+MultB1X+MultB2X+MultB3X+MultC1X+MultC2X+MultC3X);
-assign combSobelY = $signed(MultA1Y+MultA2Y+MultA3Y+MultB1Y+MultB2Y+MultB3Y+MultC1Y+MultC2Y+MultC3Y);
+assign combSobelX = (MultA1X+MultA2X+MultA3X+MultB1X+MultB2X+MultB3X+MultC1X+MultC2X+MultC3X);
+assign combSobelY = (MultA1Y+MultA2Y+MultA3Y+MultB1Y+MultB2Y+MultB3Y+MultC1Y+MultC2Y+MultC3Y);
 
 
 
@@ -59,29 +58,31 @@ beatCounter
 
 always@(posedge clk)
 	begin
+//		$display("X Mult: %d combSobelX: %d",$signed(MultA1X+MultA2X+MultA3X+MultB1X+MultB2X+MultB3X+MultC1X+MultC2X+MultC3X),combSobelX);
+//		$display("Y Mult: %d combSobelY: %d",$signed(MultA1Y+MultA2Y+MultA3Y+MultB1Y+MultB2Y+MultB3Y+MultC1Y+MultC2Y+MultC3Y),combSobelY);
 		if (started == 1)
 			begin
 				//Sobel x Filter multiplication
 					
-				MultA1X <= $signed(sobelHoldOutA[23:16]*(-1));
-				MultA2X <= $signed(0);
-				MultA3X <= $signed(sobelHoldOutA[7:0]);
-				MultB1X <= $signed(sobelHoldOutB[23:16]*-2);
-				MultB2X <= $signed(0);
-				MultB3X <= $signed(sobelHoldOutB[7:0]*2);
-				MultC1X <= $signed(sobelHoldOutC[23:16]*(-1));
-				MultC2X <= $signed(0);
-				MultC3X <= $signed(sobelHoldOutC[7:0]);						
+				MultA1X <= (sobelHoldOutA[23:16]*(-1));
+				MultA2X <= 0;
+				MultA3X <= (sobelHoldOutA[7:0]);
+				MultB1X <= (sobelHoldOutB[23:16]*(-2));
+				MultB2X <= 0;
+				MultB3X <= (sobelHoldOutB[7:0]*2);
+				MultC1X <= (sobelHoldOutC[23:16]*(-1));
+				MultC2X <= 0;
+				MultC3X <= (sobelHoldOutC[7:0]);						
 				// Sobel Y Filter Multiplication 	
-				MultA1Y <= $signed(sobelHoldOutA[23:16]*-1);
-				MultA2Y <= $signed(sobelHoldOutA[15:8]*-2);
-				MultA3Y <= $signed(sobelHoldOutA[7:0]*-1);
-				MultB1Y <= $signed(0);
-				MultB2Y <= $signed(0);
-				MultB3Y <= $signed(0);
-				MultC1Y <= $signed(sobelHoldOutC[23:16]);
-				MultC2Y <= $signed(sobelHoldOutC[15:8]*2);
-				MultC3Y <= $signed(sobelHoldOutC[7:0]);
+				MultA1Y <= (sobelHoldOutA[23:16]*(-1));
+				MultA2Y <= (sobelHoldOutA[15:8]*(-2));
+				MultA3Y <= (sobelHoldOutA[7:0]*(-1));
+				MultB1Y <= (0);
+				MultB2Y <= (0);
+				MultB3Y <= (0);
+				MultC1Y <= (sobelHoldOutC[23:16]);
+				MultC2Y <= (sobelHoldOutC[15:8]*(2));
+				MultC3Y <= (sobelHoldOutC[7:0]);
 				sobelX <= combSobelX;
 				sobelY <= combSobelY;
 //				sobelX <= {combSobelX[12],combSobelX[7:0]};//Values contraindicated first 'sign' bit + rest of 8 bit values... 

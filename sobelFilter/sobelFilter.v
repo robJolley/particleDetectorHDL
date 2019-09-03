@@ -30,6 +30,12 @@ wire [19:0]read_addr1;
 reg [19:0]read_addr2;
 reg [19:0]read_addr3;
 
+reg [63:0]A;
+reg [63:0]B;
+reg [63:0]C;
+reg [63:0]D;
+reg outStart;
+
 reg [19:0]addresSchedule;
 reg [23:0]sobelCount; 
 wire [19:0]write_addr1;
@@ -138,6 +144,7 @@ sobelBufferBlock	BufferBlock(clk,popBufferEn,reset,q1,BufferA,BufferB,BufferC,Bu
 //Shifter block to shift through 5x128 bit registers 16 bits at a time to populate the two hold blocks
 sobelShifterBlock	ShifterBlock(clk,sobelShiftEn,reset,BufferA,BufferB,BufferC,BufferD,sobelShiftOutA,sobelShiftOutB,sobelShiftOutC,sobelShiftOutD);
 
+//sobelShifterBlock	ShifterBlock(clk,sobelShiftEn,reset,A,B,C,D,sobelShiftOutA,sobelShiftOutB,sobelShiftOutC,sobelShiftOutD);
 //Hold block arranging the pixels in 3x3 matrix for presentation to the multiplier block
 sobelHoldBlock #(.STARTADDRESS(STARTHOLD1),.ENDADDRESS(ENDHOLD1))
 HolderBlock1(clk,HoldEn,reset,sobelShiftOutHold1A,sobelShiftOutHold1B,sobelShiftOutHold1C,HoldOut1A,HoldOut1B,HoldOut1C);
@@ -192,6 +199,8 @@ sobelDir #(.STARTADDRESS(STARTHOLD4),.ENDADDRESS(ENDHOLD4))
 sobelDir4(clk,startDirEn,reset,sobelX4,sobelY4,dirE4);
 
 sobelOutBlock sobelOutBlockMag(clk,outEn,reset,normalisedMag1,normalisedMag2,normalisedMag3,normalisedMag4,data2,we2,write_addr2);
+
+//sobelOutBlock sobelOutBlockMag(clk,outEn,reset,A,B,C,D,data2,we2,write_addr2);
 
 /*
 //Block to normalize the output of the multiplier to an 8 bit (pixel value)
@@ -418,8 +427,26 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
 				HoldEn = 0;
 				sobelSequence = INITCASE;
 				sobelCount <= 0;
+				A = 8'h20;
+				B = 8'h40;
+				C = 8'h80;
+				D = 8'h00;
+				
 			end
 	end
+	
+	always@(posedge clk)
+     begin
+		if((outEn == 1) || (outStart == 1))
+			begin
+
+				A = A+1;
+				B = B+1;
+				C = C+1;
+				D = D+1;
+				outStart = 1;
+			end
+	end	
 	
 	always@(posedge clk)
      begin

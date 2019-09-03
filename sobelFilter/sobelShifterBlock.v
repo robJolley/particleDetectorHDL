@@ -28,21 +28,26 @@ reg [127:0]sobelShiftBufferA;
 reg [127:0]sobelShiftBufferB;
 reg [127:0]sobelShiftBufferC;
 reg [127:0]sobelShiftBufferD;
+reg [63:0]sobelShiftBufferAH;
+reg [63:0]sobelShiftBufferBH;
+reg [63:0]sobelShiftBufferCH;
+reg [63:0]sobelShiftBufferDH;
 reg [63:0]QA;
+wire nclk;
 
 
 assign sobelShiftOutA[31:0] = sobelShiftBufferA[127:96];
 assign sobelShiftOutB[31:0] = sobelShiftBufferB[127:96];
 assign sobelShiftOutC[31:0] = sobelShiftBufferC[127:96];
 assign sobelShiftOutD[31:0] = sobelShiftBufferD[127:96];
-
+assign nclk = !clk;
 
 beatCounter
 	#(.MINPIXEL(STARTADDRESS),.MAXPIXEL(ENDADDRESS),.BEATS(BEATS),.PAUSE(PAUSE),.PIXELCOUNTERWIDTH(PIXW)
 	) bufferCounterBlock(clk,sobelShiftEn,reset,process,started,pixelCounter);
 
 
-always@(posedge clk)
+always@(posedge nclk)
 	begin
 		if (started == 1 && process == 1)
 			begin
@@ -50,17 +55,24 @@ always@(posedge clk)
 				sobelShiftBufferB[127:16] <= sobelShiftBufferB[111:0];
 				sobelShiftBufferC[127:16] <= sobelShiftBufferC[111:0];
 				sobelShiftBufferD[127:16] <= sobelShiftBufferD[111:0];
+				sobelShiftBufferAH[63:0] <= sobelShiftBufferA[95:32];//Shifting 16 bits to MSB
+				sobelShiftBufferBH[63:0] <= sobelShiftBufferB[95:32];
+				sobelShiftBufferCH[63:0] <= sobelShiftBufferC[95:32];
+				sobelShiftBufferDH[63:0] <= sobelShiftBufferD[95:32];				
+						
 			end
 		if (started == 1 && process == 0)//May require its own block
 			begin
-				sobelShiftBufferA[127:64] <= sobelShiftBufferA[111:48];//Shifting 16 bits to MSB
-				sobelShiftBufferB[127:64] <= sobelShiftBufferB[111:48];
-				sobelShiftBufferC[127:64] <= sobelShiftBufferC[111:48];
-				sobelShiftBufferD[127:64] <= sobelShiftBufferD[111:48];
+				sobelShiftBufferA[127:64] <= sobelShiftBufferAH[63:0];//Shifting 16 bits to MSB
+				sobelShiftBufferB[127:64] <= sobelShiftBufferBH[63:0];
+				sobelShiftBufferC[127:64] <= sobelShiftBufferCH[63:0];
+				sobelShiftBufferD[127:64] <= sobelShiftBufferDH[63:0];
 			//Its possible this is not allowed.... ########
-				sobelShiftBufferA[63:0] <= BufferA;//Takes sobelBuffer + q1 'array' and deposits in the 64 LSB's of the 5 ShiftBuffer Block
+
+				
+				sobelShiftBufferA[63:0] <= BufferC;//Takes sobelBuffer + q1 'array' and deposits in the 64 LSB's of the 5 ShiftBuffer Block
 				sobelShiftBufferB[63:0] <= BufferB;
-				sobelShiftBufferC[63:0] <= BufferC;
+				sobelShiftBufferC[63:0] <= BufferA;
 				sobelShiftBufferD[63:0] <= q1;
 			end
 	end

@@ -17,11 +17,12 @@ wire [7:0]normalisedByte1;
 wire [7:0]normalisedByte2;
 wire [7:0]normalisedByte3;
 wire [7:0]normalisedByte4;
+wire nclk;
 reg [63:0]outData;
 reg [63:0]out1DataHold;
+reg [63:0]out1DataHold1;
 reg [63:0]out2DataHold;
 reg [63:0]out2DataHold1;
-reg [63:0]out2DataHold2;
 reg [2:0]dataSched;
 reg we;
 reg [19:0]wraddr;
@@ -29,7 +30,7 @@ reg [19:0]currentAddress;
 reg startOutput;
 
 
-
+assign nclk = !clk;
 
 
 
@@ -38,50 +39,96 @@ beatCounter
 	) bufferCounterBlock(clk,normPutDataEn,reset,process,started,pixelCounter);
 
 
-always@(posedge clk)
+always@(posedge nclk)
 	begin
 		if (started == 1)
-			case(dataSched)
-				COUNT3:
-					begin
-						out1DataHold[7:0] <= normalisedByte4;
-						out1DataHold[15:8] <= normalisedByte3;
-						out2DataHold[7:0] <= normalisedByte2;
-						out2DataHold[15:8] <= normalisedByte1;
-						dataSched <=COUNT0;
-
-					end
-				COUNT2:
-					begin
-						out1DataHold[23:16] <= normalisedByte4;
-						out1DataHold[31:24] <= normalisedByte3;
-						out2DataHold[23:16] <= normalisedByte2;
-						out2DataHold[31:24] <= normalisedByte1;
-						dataSched <=COUNT3;
-						startOutput <= 1;
-					end
-				COUNT1:
-					begin
-						out1DataHold[39:32] <= normalisedByte4;
-						out1DataHold[47:40] <= normalisedByte3;
-						out2DataHold[39:32] <= normalisedByte2;
-						out2DataHold[47:40] <= normalisedByte1;
-						dataSched <=COUNT2;
-					end
-				COUNT0:
-					begin
-						out1DataHold[55:48] <=normalisedByte4;
-						out1DataHold[63:56] <=normalisedByte3;
-						out2DataHold[55:48] <=normalisedByte2;
-						out2DataHold[63:56] <=normalisedByte1;
+			begin
+				case(dataSched)
+					COUNT0:
+						begin
+							out1DataHold[55:48] <=normalisedByte4;
+							out1DataHold[63:56] <=normalisedByte3;
+							out2DataHold[55:48] <=normalisedByte2;
+							out2DataHold[63:56] <=normalisedByte1;
 					//	out1DataHold[55:48] <=255;
 					//	out1DataHold[63:56] <=255;
 					//	out2DataHold[55:48] <=255;
 					//	out2DataHold[63:56] <=255;
-						dataSched <=COUNT1;
-					end
-				default:dataSched <= COUNT0;
-			endcase
+				//		dataSched <=COUNT1;
+					//	$display("Count0");
+						end
+					
+					COUNT1:
+						begin
+							out1DataHold[39:32] <= normalisedByte4;
+							out1DataHold[47:40] <= normalisedByte3;
+							out2DataHold[39:32] <= normalisedByte2;
+							out2DataHold[47:40] <= normalisedByte1;
+					//	dataSched <=COUNT2;
+					//	$display("Count1");
+						end
+					
+					COUNT2:
+						begin
+							out1DataHold[23:16] <= normalisedByte4;
+							out1DataHold[31:24] <= normalisedByte3;
+							out2DataHold[23:16] <= normalisedByte2;
+							out2DataHold[31:24] <= normalisedByte1;
+			//			dataSched <=COUNT3;
+			//			startOutput <= 1;
+					//	$display("Count2");
+						end
+
+					COUNT3:
+						begin
+							out1DataHold1[7:0] <= normalisedByte4;
+							out1DataHold1[15:8] <= normalisedByte3;
+							out2DataHold1[7:0] <= normalisedByte2;
+							out2DataHold1[15:8] <= normalisedByte1;
+							out2DataHold1[63:16] <=out2DataHold[63:16];
+							out1DataHold1[63:16] <=out1DataHold[63:16];
+							startOutput <= 1;
+			//			dataSched <=COUNT0;
+					//	$display("Count3");
+
+						end
+			//	default:dataSched <= COUNT0;
+				endcase
+			end
+		end
+		
+always@(posedge clk)
+	begin
+		if (started == 1)
+			begin
+				case(dataSched)
+					COUNT0:
+						begin
+
+							dataSched <=COUNT1;
+						end
+					COUNT1:
+						begin
+
+							dataSched <= COUNT2;
+						//	$display("Count1");
+						end
+
+					COUNT2:
+						begin
+							dataSched <= COUNT3;
+						//	$display("Count3");
+
+						end
+					COUNT3:
+						begin
+
+							dataSched <= COUNT0;
+						//	$display("Count1");
+						end
+					default:dataSched <= COUNT0;
+				endcase
+			end
 		end
 				
 always@(posedge clk)
@@ -90,7 +137,7 @@ always@(posedge clk)
 			dataSched <= COUNT0;
 			currentAddress <= STARTADDRESS;//**** Was STARTADDRESS - 1
 			startOutput <= 0;
-			wraddr <= STARTADDRESS;
+//			wraddr <= STARTADDRESS;
 		end		
 always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clock ticks (8 pixels) 
 // the second output is to the pixels below first,  when the end of the image row is reached the address jumps 256 places so that two 
@@ -100,16 +147,16 @@ always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clo
 		begin
 			if(dataSched == COUNT3)
 				begin
-//					outData <= out1DataHold;
 					wraddr <=currentAddress;
-					out2DataHold1 <= out2DataHold;
+
 					we <= 0;
 				end
 			if(dataSched == COUNT0)
 				begin
-					out2DataHold1 <= out2DataHold;
-					outData <= out1DataHold;
+
 					wraddr <=currentAddress;
+
+					outData <= out1DataHold1;
 					we <= 1;
 				end
 				
@@ -121,7 +168,7 @@ always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clo
 			if(dataSched == COUNT2)
 				begin
 					we <= 1;
-					outData <= out2DataHold1;
+
 					if (currentAddress[7:0] == 255)
 						begin
 							currentAddress <= currentAddress + 257;
@@ -130,6 +177,8 @@ always@(posedge clk)//Control to output to SRAM,  64 bit is output every two clo
 						begin
 							currentAddress <= currentAddress +1;
 						end
+					outData <= out2DataHold1;
+					we <= 1;
 				end	
 		end	
 	

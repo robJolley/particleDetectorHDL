@@ -35,7 +35,7 @@ beatCounter
 
 always@(posedge clk)
 	begin
-		if (started == 1 && process == 1)
+		if (started == 1)
 			begin
 				HoldBufferA[23:0] <= ShiftA;//Takes gausBuffer + q1 'array' and deposits in the 64 LSB's of the 5 ShiftBuffer Block
 				HoldBufferB[23:0] <= ShiftB;

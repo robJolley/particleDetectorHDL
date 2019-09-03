@@ -19,8 +19,12 @@ wire [23:0]pixelCounter;
 reg [63:0]regBufferB;
 reg [63:0]regBufferC;
 reg [63:0]regBufferD;
+reg [63:0]regBufferBH;
+reg [63:0]regBufferCH;
 
+wire nclk;
 
+assign nclk = !clk;
 
 beatCounter
 	#(.MINPIXEL(STARTADDRESS),.MAXPIXEL(ENDADDRESS),.BEATS(BEATS),.PAUSE(PAUSE),.PIXELCOUNTERWIDTH(PIXW)
@@ -29,13 +33,13 @@ beatCounter
 
 
 	
-always@(posedge clk)
+always@(posedge nclk)
 	begin
 		if (process == 1)
 			begin
 				regBufferB <= readData;
-				regBufferC <= regBufferB;
-				regBufferD <= regBufferC;
+				regBufferC <= regBufferBH;
+				regBufferD <= regBufferCH;
 
 			end
 		if (process == 0 && started == 1)
@@ -44,6 +48,17 @@ always@(posedge clk)
 				BufferC <= regBufferC;
 				BufferB <= regBufferB;
 				BufferA <= readData;
+
+			end
+	end
+
+always@(posedge clk)
+	begin
+		if (process == 1)
+			begin
+				regBufferBH <= regBufferB;
+				regBufferCH <= regBufferC;
+
 
 			end
 	end
