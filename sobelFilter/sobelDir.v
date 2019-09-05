@@ -18,7 +18,7 @@ wire normaliseFilter;
 
 
 
-assign sobelY16 = {sobelY,8'b00000000};
+assign sobelY16 = (sobelY > 0)?{sobelY,8'b00000000}:{sobelY,8'b11111111};
 assign normaliseFilter = ((sobelX**2+ sobelX**2) >= STHRESHOLD);
 
 
@@ -50,19 +50,19 @@ always@(posedge clk)
 			begin
                 if (106  < normalisedDir && normalisedDir <= 616)
 					begin
-						dirE <= 135;
+						dirE <= 255;//135
 					end
                 else if (normalisedDir > 616 || normalisedDir <= -305)
 					begin
-						dirE <= 90;
+						dirE <= 192;//90
 					end
                 else if ( -305 < normalisedDir && normalisedDir <=106)
 					begin
-						dirE <= 45;
+						dirE <= 128;//46
 					end
                 else
 					begin
-						dirE <= 10;
+						dirE <= 64;//10
 					end
 			end
 			

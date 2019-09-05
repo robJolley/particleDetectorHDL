@@ -39,10 +39,10 @@ sobelFilter sobelFilter1(clk,reset,startEn,read_addr1,q1,we2,we3,write_addr2,dat
 initial
 	begin
 		$readmemh("C:/hexfiles/outfile2.hex", SRAM1.ram);		
-		SRAM1.ram[0] <= 64'hF0E0D0C0B0A09080;
-		SRAM1.ram[256] <= 64'hF0E0D0C0B0A09080;
-		SRAM1.ram[512] <= 64'hF0E0D0C0B0A09080;
-		SRAM1.ram[768] <= 64'hF0E0D0C0B0A09080;
+	//	SRAM1.ram[0] <= 64'hF0E0D0C0B0A09080;
+	//	SRAM1.ram[256] <= 64'hF0E0D0C0B0A09080;
+	//	SRAM1.ram[512] <= 64'hF0E0D0C0B0A09080;
+	//	SRAM1.ram[768] <= 64'hF0E0D0C0B0A09080;
 			
 
 		
@@ -59,11 +59,11 @@ initial
 		#10;
 		startEn = 0;
 
-	 	#5000000;
+	 	#4000000;
 //		#150000;
-//		#10000;
+		#10000;
 		$writememh("C:/hexfiles/outSRAM4sobel.hex", SRAM2.ram);
-//		$writememh("C:/hexfiles/outSRAM3sobel.hex", SRAM1.ram);
+		$writememh("C:/hexfiles/outSRAM3sobeldir.hex", SRAM3.ram);
 		$display("ramValue:",SRAM2.ram[0]);
 		$stop;
 		$finish;

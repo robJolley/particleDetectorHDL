@@ -7,6 +7,7 @@ input clk,startEn,reset;
 input signed[8:0]sobelX;
 input signed[8:0]sobelY;
 output [7:0]normalisedMag;
+output normaliseFilter;
 wire clk,startEn,started,process,reset;
 wire [23:0]pixelCounter;
 wire signed[8:0]sobelX;
@@ -17,7 +18,7 @@ reg [7:0] normalisedMag;
 reg processFlag;
 reg signed[9:0]normDevider;
 
-assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) > 0);//STHRESHOLD);
+assign normaliseFilter = ((sobelX*sobelX + sobelY*sobelY) > STHRESHOLD);
 assign unnormalisedMag = (sobelX*sobelX + sobelY*sobelY);
 
 

@@ -107,10 +107,18 @@ wire [7:0]dirE1;
 wire [7:0]dirE2;
 wire [7:0]dirE3;
 wire [7:0]dirE4;
+wire [7:0]dirE1C;
+wire [7:0]dirE2C;
+wire [7:0]dirE3C;
+wire [7:0]dirE4C;
 
 wire we2;
 
 
+assign dirE1C = (normalisedMag1 == 8'b00000000)? 8'h00:dirE1;//Checks normalisedMag if its greater than 0 dirE is assigned to dirEC
+assign dirE2C = (normalisedMag2 == 8'b00000000)? 8'h00:dirE2;
+assign dirE3C = (normalisedMag3 == 8'b00000000)? 8'h00:dirE3;
+assign dirE4C = (normalisedMag4 == 8'b00000000)? 8'h00:dirE4;
 
 assign sobelShiftOutHold1A = sobelShiftOutA[31:8];
 assign sobelShiftOutHold1B = sobelShiftOutB[31:8];
@@ -200,7 +208,7 @@ sobelDir4(clk,startDirEn,reset,sobelX4,sobelY4,dirE4);
 
 sobelOutBlock sobelOutBlockMag(clk,outEn,reset,normalisedMag1,normalisedMag2,normalisedMag3,normalisedMag4,data2,we2,write_addr2);
 
-//sobelOutBlock sobelOutBlockMag(clk,outEn,reset,A,B,C,D,data2,we2,write_addr2);
+sobelOutBlock sobelOutBlockDir(clk,outEn,reset,dirE1C,dirE2C,dirE3C,dirE4C,data3,we3,write_addr3);
 
 /*
 //Block to normalize the output of the multiplier to an 8 bit (pixel value)
