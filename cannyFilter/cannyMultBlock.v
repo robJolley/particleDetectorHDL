@@ -28,8 +28,11 @@ wire [7:0]southWest;
 wire [7:0]northEast;
 wire [7:0]east;
 wire [7:0]west;
+wire nclk;
 
-reg maxDir;
+reg [7:0]maxDir;
+reg maxPoint, maxPointer;
+reg [7:0]cannyOutByte;
  
 assign dirE = dirHoldOutB[15:8];
 assign curPoint = cannyHoldOutB[15:8];
@@ -41,6 +44,7 @@ assign northEast = cannyHoldOutA[7:0];
 assign northWest = cannyHoldOutA[23:16];
 assign east = cannyHoldOutB[7:0];
 assign west = cannyHoldOutB[23:16];
+assign nclk =!clk;
 
 
 
@@ -48,60 +52,89 @@ beatCounter
 	#(.MINPIXEL(STARTADDRESS),.MAXPIXEL(ENDADDRESS),.BEATS(BEATS),.PAUSE(PAUSE),.COUNTSTEP(COUNTSTEPHOLD),.PIXELCOUNTERWIDTH(PICW)
 	) bufferCounterBlock(clk,startMultiplierEn,reset,process,started,pixelCounter);
 
+
 always@(posedge clk)
 	begin
 		if (started == 1)
 			begin
 				if (curPoint > 0)
 					begin
-					if (dirE == 255)//NW
-						begin
-							maxDir <= 1
-
-							if (northEast >= curPoint)//NE
-								maxPoint <= 0;
-							if (curPoint <= southWest)//SW
-								maxPoint <= 0;
-						end
-					else if (dirE ==192)//N
-						begin
-							maxDir <= 1
-							if (north >= curPoint)//N
-								maxPoint <= 0;
-							if (curPoint <= south)//S
-								maxPoint <= 0;
-						end
-						
-					else if (dirE == 128)//NE
-						begin
-							maxDir <= 1;
-							if (northWest >= curPoint)//NW
-								maxPoint <= 0;
-							if (curPoint <= souhEast)//SE
-								maxPoint = 0;
-						end
-					else//#E
-						begin
-							maxDir = 1
-					if (west >= curPoint)//W
-						maxPoint = 0;
-					if (curPoint <= east)://E
-						maxPoint = 0;
-						end
-				end
-				
-            if (maxPoint == 1)
-				begin
-					cannyOutByte <= maxDir;
-				end	
-
+						maxPoint <= 1;
+					end
+				else
+					begin
+						maxPoint <= 0;
+					end
+			end
 	end
 
+always@(posedge nclk)
+	begin
+		if (started == 1)
+			begin
+				if (curPoint > 0)
+					begin
+						if (dirE == 255)//NW
+							begin
+
+								if (northEast >= curPoint)//NE
+									maxPointer <= 0;
+								if (curPoint <= southWest)//SW
+									maxPointer <= 0;
+							end
+						else if (dirE ==192)//N
+							begin
+								if (north >= curPoint)//N
+									maxPointer <= 0;
+								if (curPoint <= south)//S
+									maxPointer <= 0;
+							end
+							
+						else if (dirE == 128)//NE
+							begin
+								if (northWest >= curPoint)//NW
+									maxPointer <= 0;
+								if (curPoint <= southEast)//SE
+									maxPointer <= 0;
+							end
+						else//#E
+							begin
+								if (west >= curPoint)//W
+									maxPointer <= 0;
+								if (curPoint <= east)//E
+									maxPointer <= 0;
+							end
+					end
+				else
+					begin
+						maxPointer <=maxPoint;
+					end
+			end
+	end
+	
+
+	
+always@(posedge clk)
+	begin
+		if (started == 1)
+			begin
+				if (maxPointer == 1)
+					begin
+						cannyOutByte <= maxDir;
+					end
+				else
+					begin
+						cannyOutByte <= 0;	
+					end
+			end
+	end
 	
 always@(posedge clk)
 	if(reset == 1)
 		begin
-
+			maxDir <= 255;
 		end
+		
+
 
 endmodule			

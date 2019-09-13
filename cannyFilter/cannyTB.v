@@ -33,14 +33,12 @@ simple_ram_dual_clock  SRAM1(data1,read_addr1,write_addr1,we1,clk, clk,q1);
 simple_ram_dual_clock  SRAM2(data2,read_addr1,write_addr1,we1,clk, clk,q2);
 simple_ram_dual_clock  SRAM3(data3,read_addr3,write_addr3,we3,clk, clk,q3);
 
-cannyFilter cannyFilter1(clk,reset,startEn,read_addr1,q1,we2,we3,write_addr2,data2,write_addr3,data3,getNext);
-
-
+cannyFilter cannyFilter1(clk,reset,startEn,read_addr1,read_addr2,read_addr3,q1,,q2,q3,we1,we2,we3,write_addr3,data3,getNext);
 
 initial
 	begin
-		$readmemh("C:/hexfiles/outfileSobelOut.hex", SRAM1.ram);
-		$readmemh("C:/hexfiles/outfileDirOut.hex", SRAM2.ram);	
+		$readmemh("C:/hexfiles/outSobel.hex", SRAM1.ram);
+		$readmemh("C:/hexfiles/outSobelDir.hex", SRAM2.ram);	
 		
 	//	SRAM1.ram[0] <= 64'hF0E0D0C0B0A09080;
 	//	SRAM1.ram[256] <= 64'hF0E0D0C0B0A09080;
@@ -64,9 +62,8 @@ initial
 
 	 	#4000000;
 //		#150000;
-		#10000;
-		$writememh("C:/hexfiles/outSRAM4canny.hex", SRAM2.ram);
-		$writememh("C:/hexfiles/outSRAM3cannydir.hex", SRAM3.ram);
+//		#10000;
+		$writememh("C:/hexfiles/outSRAM4canny.hex", SRAM3.ram);
 		$display("ramValue:",SRAM2.ram[0]);
 		$stop;
 		$finish;

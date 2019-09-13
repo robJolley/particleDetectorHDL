@@ -4,8 +4,10 @@ module cannyFilter(clk,reset,startEn,read_addr1,read_addr2,read_addr3,q1,,q2,q3,
 input clk,reset,startEn;
 input [19:0]read_addr1;
 input [19:0]read_addr2;
+input [19:0]read_addr3;
 input [63:0]q1;
 input [63:0]q2;
+input [63:0]q3;
 input we1,we2;
 
 output we3,getNext;
@@ -27,7 +29,12 @@ wire [63:0]q3;
 
 wire [19:0]read_addr1;
 wire [19:0]read_addr2;
-reg [19:0]read_addr3;
+wire [19:0]read_addr3;
+
+wire [7:0]cannyOutByte1;
+wire [7:0]cannyOutByte2;
+wire [7:0]cannyOutByte3;
+wire [7:0]cannyOutByte4;
 
 
 reg outStart;
@@ -109,6 +116,24 @@ wire [23:0]cannyShiftOutHold4A;
 wire [23:0]cannyShiftOutHold4B;
 wire [23:0]cannyShiftOutHold4C;
 
+wire [23:0]cannyShiftOutHold1DirA;
+wire [23:0]cannyShiftOutHold1DirB;
+wire [23:0]cannyShiftOutHold1DirC;
+
+
+wire [23:0]cannyShiftOutHold2DirA;
+wire [23:0]cannyShiftOutHold2DirB;
+wire [23:0]cannyShiftOutHold2DirC;
+
+wire [23:0]cannyShiftOutHold3DirA;
+wire [23:0]cannyShiftOutHold3DirB;
+wire [23:0]cannyShiftOutHold3DirC;
+
+
+wire [23:0]cannyShiftOutHold4DirA;
+wire [23:0]cannyShiftOutHold4DirB;
+wire [23:0]cannyShiftOutHold4DirC;
+
 wire we2;
 
 assign cannyShiftOutHold1A = cannyShiftOutA[31:8];
@@ -156,14 +181,11 @@ assign cannyShiftOutHold4DirC = cannyShiftOutDirD[23:0];
 
 //Buffer block used to store 4 of the 5 4 bit registers to prepare them for the shifter block.
 
-cannyBufferBlockSobel	BufferBlock(clk,popBufferEn,reset,q1,BufferA,BufferB,BufferC,BufferD);
-
-cannyBufferBlockDir	BufferBlock(clk,popBufferEn,reset,q2,BufferDirA,BufferDirB,BufferDirC,BufferDirD);
+cannyBufferBlock cannyBufferBlock(clk,popBufferEn,reset,q1,BufferA,BufferB,BufferC,BufferD);
 
 //Shifter block to shift through 5x128 bit registers 16 bits at a time to populate the two hold blocks
-cannyShifterSobelBlock	ShifterBlock(clk,cannyShiftEn,reset,BufferA,BufferB,BufferC,BufferD,cannyShiftOutA,cannyShiftOutB,cannyShiftOutC,cannyShiftOutD);
+cannyShifterBlock ShifterBlock(clk,cannyShiftEn,reset,BufferA,BufferB,BufferC,BufferD,cannyShiftOutA,cannyShiftOutB,cannyShiftOutC,cannyShiftOutD);
 
-cannyShifterDirBlock	ShifterBlock(clk,cannyShiftEn,reset,BufferDirA,BufferDirB,BufferDirC,BufferDirD,cannyShiftOutDirA,cannyShiftOutDirB,cannyShiftOutDirC,cannyShiftOutDirD);
 //cannyShifterBlock	ShifterBlock(clk,cannyShiftEn,reset,A,B,C,D,cannyShiftOutA,cannyShiftOutB,cannyShiftOutC,cannyShiftOutD);
 //Hold block arranging the pixels in 3x3 matrix for presentation to the multiplier block
 cannyHoldBlock #(.STARTADDRESS(STARTHOLD1),.ENDADDRESS(ENDHOLD1))
@@ -432,10 +454,6 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
 				HoldEn = 0;
 				cannySequence = INITCASE;
 				cannyCount <= 0;
-				A = 8'h20;
-				B = 8'h40;
-				C = 8'h80;
-				D = 8'h00;
 				
 			end
 	end
@@ -444,11 +462,6 @@ normalisedOutDataBlock normalisedOut(clk,normPutDataEn,reset,normalisedByte1,nor
      begin
 		if((outEn == 1) || (outStart == 1))
 			begin
-
-				A = A+1;
-				B = B+1;
-				C = C+1;
-				D = D+1;
 				outStart = 1;
 			end
 	end	

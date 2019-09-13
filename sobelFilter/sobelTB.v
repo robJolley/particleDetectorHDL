@@ -1,7 +1,7 @@
 `timescale 1ns/100ps
 
 module sobelTB();
-
+integer f;
 parameter C0 = 3'b000, C1 = 3'b001, C2 = 3'b010, C3 = 3'b011,C4 = 3'b100; 
 wire [63:0]data1;
 wire [63:0]data2;
@@ -38,7 +38,8 @@ sobelFilter sobelFilter1(clk,reset,startEn,read_addr1,q1,we2,we3,write_addr2,dat
 
 initial
 	begin
-		$readmemh("C:/hexfiles/outfile2.hex", SRAM1.ram);		
+		$readmemh("C:/hexfiles/outfile2.hex", SRAM1.ram);
+		f = $fopen("sobTan.csv","w");
 	//	SRAM1.ram[0] <= 64'hF0E0D0C0B0A09080;
 	//	SRAM1.ram[256] <= 64'hF0E0D0C0B0A09080;
 	//	SRAM1.ram[512] <= 64'hF0E0D0C0B0A09080;
@@ -65,6 +66,7 @@ initial
 		$writememh("C:/hexfiles/outSRAM4sobel.hex", SRAM2.ram);
 		$writememh("C:/hexfiles/outSRAM3sobeldir.hex", SRAM3.ram);
 		$display("ramValue:",SRAM2.ram[0]);
+		$fclose(f);
 		$stop;
 		$finish;
 	end
@@ -135,6 +137,14 @@ initial
 				read_addr1 = 0;
 				addresSchedule = 768;
 				addressCase = C0;
+			end
+	end
+	
+		always@(posedge clk)
+     begin
+		if(sobelFilter1.sobelMultBlock1.started != 0)
+			begin
+				 $fwrite(f,"%d,%d\n",sobelFilter1.sobelMultBlock1.sobelY,sobelFilter1.sobelDir1.sobelY,sobelFilter1.sobelMultBlock1.sobelX);
 			end
 	end
 	
